@@ -343,10 +343,10 @@ elif pagina == "4. Simulador de decisiones":
         "Referencia: supuestos iniciales", "Ejemplo: alquiler más económico", "Personalizado (conservar valores editados)"
     ], help="Los escenarios precargan valores ilustrativos. Puede modificarlos después.")
     presets = {
-        "Referencia: supuestos iniciales": dict(electrico=450., compra=120000000., canon=4500000., variable=0.,
-                                                he=0.08, ha=0.20, anos=5, residual=35, tasa=10),
-        "Ejemplo: alquiler más económico": dict(electrico=450., compra=120000000., canon=250000., variable=0.,
-                                                  he=0.08, ha=0.20, anos=5, residual=35, tasa=10)
+        "Referencia: supuestos iniciales": dict(electrico=410., compra=120000000., canon=3500000., variable=260.,
+                                                he=0.0462, ha=0.0462, anos=5, residual=35, tasa=10),
+        "Ejemplo: alquiler más económico": dict(electrico=410., compra=120000000., canon=3000000., variable=260.,
+                                                he=0.0462, ha=0.0462, anos=5, residual=35, tasa=10)
     }
     if "sim_escenario_previo" not in st.session_state:
         st.session_state.sim_escenario_previo = None
@@ -372,23 +372,74 @@ elif pagina == "4. Simulador de decisiones":
         canon_alquiler = st.number_input("📅 Pago mensual del alquiler ($ COP/mes)",
             min_value=0., step=250000., key="sim_canon", format="%.0f",
             help="Cuota mensual estimada por usar un vehículo alquilado. Compruebe qué servicios incluye el contrato.")
-        costo_alquiler_km = st.number_input("➕ Cargo adicional por kilómetro alquilado ($ COP/km)",
-            min_value=0., step=50., key="sim_variable", format="%.0f",
-            help="Cobro adicional por kilómetro recorrido, si aplica. Use 0 si el alquiler no tiene este cargo.")
+        costo_alquiler_km = st.number_input("⚡ Costo energético del eléctrico alquilado ($ COP/km)",
+            min_value=0., step=10., key="sim_variable", format="%.0f",
+            help="Costo de energía por kilómetro recorrido. Estimado con un consumo de 0.21 kWh/km y una tarifa de $1.220,33 COP/kWh de Enel Colombia. No incluye penalizaciones por kilometraje excedente.")
     with c:
         huella_electrica = st.number_input("🌱 Emisiones del eléctrico (kgCO₂e/km)",
-            min_value=0., step=0.01, key="sim_he", format="%.3f",
-            help="Supuesto de emisiones operativas por kilómetro, incluyendo la electricidad según el factor utilizado. No incluye fabricación del vehículo.")
-        huella_alquiler = st.number_input("🌍 Emisiones del vehículo alquilado (kgCO₂e/km)",
-            min_value=0., step=0.01, key="sim_ha", format="%.3f",
-            help="Supuesto de emisiones operativas del vehículo que se alquilaría. Depende del tipo de vehículo.")
+            min_value=0., step=0.0001, key="sim_he", format="%.4f",
+            help="Emisiones indirectas estimadas con un consumo de 0.21 kWh/km (Weiss et al., 2024) y un factor de emisión de 0.220 kgCO₂e/kWh (UPME, Resolución 000085 de 2026). No incluye fabricación ni ciclo de vida.")
+        huella_alquiler = st.number_input("🌍 Emisiones del eléctrico alquilado (kgCO₂e/km)",
+            min_value=0., step=0.0001, key="sim_ha", format="%.4f",
+            help="Emisiones indirectas de un vehículo 100% eléctrico alquilado. Se utiliza el mismo factor de emisión y consumo energético que para el eléctrico comprado.")
 
     st.markdown("**Equivalencia de los valores ingresados**")
     r1, r2, r3 = st.columns(3)
     r1.caption(f"⚡ Operación eléctrica: **{pesos(costo_electrico)}/km**  ·  🚗 Compra: **{pesos(costo_adquisicion)}**")
-    r2.caption(f"📅 Alquiler: **{pesos(canon_alquiler)}/mes**  ·  ➕ Adicional: **{pesos(costo_alquiler_km)}/km**")
-    r3.caption(f"🌱 Eléctrico: **{numero(huella_electrica, 3)} kgCO₂e/km**  ·  🌍 Alquiler: **{numero(huella_alquiler, 3)} kgCO₂e/km**")
+    r2.caption(f"🗓️ Alquiler: **{pesos(canon_alquiler)}/mes** · ⚡ Energía: **{pesos(costo_alquiler_km)}/km**")
+    r3.caption(f"🌱 Eléctrico: **{numero(huella_electrica, 4)} kgCO₂e/km** · 🌍 Alquiler: **{numero(huella_alquiler, 4)} kgCO₂e/km**")
+    with st.expander("📚 Fundamentación científica y comercial de los valores de referencia"):
+    st.markdown("""
+        ### Referentes económicos y ambientales
 
+        **Compra de vehículo eléctrico**
+
+        - Costo operativo: $410 COP/km.
+        - Precio de adquisición: $120.000.000 COP.
+        - Emisiones indirectas: 0,0462 kgCO₂e/km.
+
+        **Alquiler de vehículo eléctrico**
+
+        - Canon mensual estimado: $3.500.000 COP.
+        - Costo energético: $260 COP/km.
+        - Emisiones indirectas: 0,0462 kgCO₂e/km.
+
+        ### Fundamentación de los cálculos
+
+        - Consumo energético: 0,21 kWh/km.
+        - Tarifa eléctrica: $1.220,33 COP/kWh.
+        - Costo energético estimado: $256,27 COP/km.
+        - Mantenimiento programado estimado: $151,61 COP/km.
+        - Factor de emisión: 0,220 kgCO₂e/kWh.
+        - Emisiones indirectas: 0,21 × 0,220 = 0,0462 kgCO₂e/km.
+
+        ### Referencias científicas
+
+        - [Weiss et al. (2024). Energy Consumption of Electric Vehicles in Europe. Sustainability, 16(17), 7529.](https://doi.org/10.3390/su16177529)
+
+        - [Burnham et al. (2021). Comprehensive Total Cost of Ownership Quantification for Vehicles with Different Size Classes and Powertrains. Argonne National Laboratory.](https://doi.org/10.2172/1780970)
+
+        - [Cuéllar-Álvarez et al. (2024). Emissions and ownership-cost of conventional and electric passenger vehicles in Bogotá, Colombia.](https://doi.org/10.1016/j.trd.2024.104105)
+
+        ### Referencias oficiales y comerciales
+
+        - [UPME (2026). Resolución 000085 de 2026.](https://gestornormativo.creg.gov.co/gestor/entorno/docs/resolucion_upme_0085_2026.htm)
+
+        - [Enel Colombia. Tarifas de energía eléctrica.](https://www.enel.com.co/)
+
+        - [Kia Colombia. Kia EV3.](https://kia.com.co/nuestros-vehiculos/ev3)
+
+        - [Renting Colombia. Referencias comerciales de alquiler.](https://www.rentingcolombia.com/)
+
+        ### Consideraciones metodológicas
+
+        Los valores corresponden a estimaciones de referencia.
+        El canon mensual requiere cotización empresarial.
+        El costo energético no incluye penalizaciones por kilometraje excedente.
+        El mantenimiento utiliza una referencia internacional y una tasa de cambio supuesta de $4.000 COP/USD.
+        Las emisiones corresponden a la operación del vehículo y no incluyen su fabricación ni el ciclo de vida completo.
+        La tasa de descuento y el valor residual son supuestos financieros pendientes de validación por Positiva.
+    """)
     vida_util = st.slider("¿Durante cuántos años quiere comparar las opciones?", 1, 10, key="sim_anos",
         help="Es el período de análisis, no la vida útil obligatoria del vehículo. Ejemplo: 5 años significa comparar cinco años de costos y emisiones.")
     residual = st.slider("¿Qué porcentaje del precio del eléctrico espera recuperar al venderlo al final?", 0, 80,
