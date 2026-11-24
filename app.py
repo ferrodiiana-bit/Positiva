@@ -563,25 +563,41 @@ elif pagina == "4. Simulador de decisiones":
         st.write("El costo incluye operación anual constante, compra inicial y reventa estimada del eléctrico, o cuotas de alquiler. No considera inflación, venta del vehículo actual, cargadores, impuestos, seguros diferenciales ni costos de transición. Las emisiones representan operación, no ciclo de vida completo. El costo histórico del vehículo actual se usa como aproximación del futuro. No es una recomendación automática de inversión.")
     st.download_button("Descargar comparación (CSV)", resultados.to_csv(index=False, sep=";").encode("utf-8-sig"),
                        file_name="simulacion_positiva.csv", mime="text/csv")
-
 elif pagina == "5. Propuesta ejecutiva":
     with st.expander("Información del proyecto y hallazgos"):
         st.markdown('**De hallazgo a decisión.** El proyecto entrega una metodología para identificar unidades que requieren mayor análisis y comparar alternativas mediante supuestos editables. No constituye una aprobación de inversión.\n\n**Ruta sugerida.** **1. Diagnosticar:** revisar los cinco casos priorizados. **2. Validar:** reunir cotizaciones y costos reales de mantenimiento, compra, alquiler y operación. **3. Pilotear:** probar una alternativa con seguimiento. **4. Escalar:** ampliar solo si la evidencia lo respalda.\n\n**Indicadores de seguimiento.** Costo por kilómetro (COP/km), emisiones por kilómetro (kgCO₂e/km), gasto operativo, kilometraje y avance de intervenciones.\n\n**Condición para implementar.** Completar costos omitidos en el prototipo, verificar factores de emisión y acordar responsables, periodicidad de actualización y criterios de decisión.')
     st.header("De la analítica a la acción")
     st.subheader("Nuestra propuesta para Positiva")
+    
     st.markdown("""
-**1. Priorizar:** revisar técnicamente los cinco
-vehículos identificados por el modelo.
+<div style="border-left: 5px solid #FF7500; padding: 12px 16px; margin-bottom: 15px;">
+    <strong style="color: #FF7500;">Presión financiera — 3 vehículos</strong><br>
+    Revisar los costos de mantenimiento, el nivel de utilización y la viabilidad económica de renovación o alquiler.
+</div>
 
-**2. Validar:** obtener cotizaciones reales de
-renovación eléctrica, alquiler y mantenimiento.
+<div style="border-left: 5px solid #003145; padding: 12px 16px; margin-bottom: 15px;">
+    <strong style="color: #003145;">Eficiencia relativa — 11 vehículos</strong><br>
+    Mantener el seguimiento preventivo y utilizar su desempeño como referencia interna para la gestión de la flota.
+</div>
 
-**3. Simular:** comparar el costo total y la huella
-ambiental bajo diferentes escenarios.
+<div style="border-left: 5px solid #627887; padding: 12px 16px; margin-bottom: 15px;">
+    <strong style="color: #627887;">Presión ambiental — 2 vehículos</strong><br>
+    Evaluar alternativas de movilidad eléctrica y oportunidades de reducción de emisiones.
+</div>
+""", unsafe_allow_html=True)
 
-**4. Implementar:** realizar un piloto controlado
-antes de ampliar las decisiones a toda la flota.
+    st.subheader("Ruta de implementación")
+
+    st.markdown("""
+**1. Priorizar:** revisar técnicamente los cinco vehículos identificados para atención prioritaria.
+
+**2. Validar:** obtener cotizaciones reales de renovación eléctrica, alquiler y mantenimiento.
+
+**3. Simular:** comparar el costo total y la huella ambiental bajo diferentes escenarios.
+
+**4. Implementar:** realizar un piloto controlado antes de ampliar las decisiones a toda la flota.
 """)
+
     st.subheader("Indicadores de seguimiento")
     st.write(
         "Costo por kilómetro, huella por kilómetro, "
