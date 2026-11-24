@@ -389,7 +389,7 @@ elif pagina == "4. Simulador de decisiones":
     r2.caption(f"🗓️ Alquiler: **{pesos(canon_alquiler)}/mes** · ⚡ Energía: **{pesos(costo_alquiler_km)}/km**")
     r3.caption(f"🌱 Eléctrico: **{numero(huella_electrica, 4)} kgCO₂e/km** · 🌍 Alquiler: **{numero(huella_alquiler, 4)} kgCO₂e/km**")
     with st.expander("📚 Fundamentación científica y comercial de los valores de referencia"):
-    st.markdown("""
+        st.markdown("""
         ### Referentes económicos y ambientales
 
         **Compra de vehículo eléctrico**
@@ -439,7 +439,7 @@ elif pagina == "4. Simulador de decisiones":
         El mantenimiento utiliza una referencia internacional y una tasa de cambio supuesta de $4.000 COP/USD.
         Las emisiones corresponden a la operación del vehículo y no incluyen su fabricación ni el ciclo de vida completo.
         La tasa de descuento y el valor residual son supuestos financieros pendientes de validación por Positiva.
-    """)
+        """)
     vida_util = st.slider("¿Durante cuántos años quiere comparar las opciones?", 1, 10, key="sim_anos",
         help="Es el período de análisis, no la vida útil obligatoria del vehículo. Ejemplo: 5 años significa comparar cinco años de costos y emisiones.")
     residual = st.slider("¿Qué porcentaje del precio del eléctrico espera recuperar al venderlo al final?", 0, 80,
