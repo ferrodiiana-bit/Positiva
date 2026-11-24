@@ -366,7 +366,8 @@ elif pagina == "4. Simulador de decisiones":
     km = float(v["KM_ANUALES_EST"])
     costo_km = float(v["COSTO_POR_KM_REAL"])
     huella_km = float(v["HUELLA_KGCO2E_POR_KM"])
-
+    segmento = v["NOMBRE_CLUSTER"]
+    st.markdown(f"**Segmento del vehículo:** {segmento}")
     def pesos(valor):
         return "$" + f"{valor:,.0f}".replace(",", ".") + " COP"
 
