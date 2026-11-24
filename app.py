@@ -483,7 +483,21 @@ elif pagina == "4. Simulador de decisiones":
     x.metric("Alternativa con menor costo", menor_costo["Alternativa"])
     y.metric("Diferencia frente a mantener actual", pesos(abs(diferencia)),
              help="Si la opción de menor costo es mantener actual, la diferencia es cero.")
-    z.metric("Alternativa con menos emisiones", menos_emisiones["Alternativa"])
+    minimo_emisiones = resultados[emision_col].min()
+    mejores_ambientales = resultados.loc[
+        resultados[emision_col] == minimo_emisiones,
+        "Alternativa"
+    ].tolist()
+
+    if len(mejores_ambientales) == 3:
+        texto_ambiental = "Empate entre las tres"
+    elif set(mejores_ambientales) == {"Comprar eléctrico", "Alquilar"}:
+        texto_ambiental = "Comprar o alquilar"
+    else:
+        texto_ambiental = " / ".join(mejores_ambientales)
+
+    z.metric("Alternativa con menos emisiones", texto_ambiental,
+        help="Si varias alternativas tienen las mismas emisiones mínimas, se muestran todas.")
     if menor_costo["Alternativa"] != "Mantener actual":
         st.info(f"En este escenario, **{menor_costo['Alternativa'].lower()}** cuesta aproximadamente **{pesos(diferencia)} menos** que mantener el vehículo actual, en dinero de hoy. Es un resultado ilustrativo, no un ahorro garantizado.")
     else:
