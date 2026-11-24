@@ -92,6 +92,12 @@ if df[columnas].isna().any().any():
 
 # Candidatos: clústeres 0 y 2, según evaluación.
 df["CANDIDATO"] = df["CLUSTER"].isin([0, 2])
+NOMBRES_CLUSTER = {
+    0: "Presión financiera",
+    1: "Eficiencia relativa",
+    2: "Presión ambiental"
+}
+df["NOMBRE_CLUSTER"] = df["CLUSTER"].map(NOMBRES_CLUSTER)
 candidatos = df[df["CANDIDATO"]].copy()
 
 
@@ -184,32 +190,44 @@ if pagina == "1. Resumen ejecutivo":
             .size()
             .reset_index(name="Vehículos")
         )
-        conteos["CLUSTER"] = conteos["CLUSTER"].astype(str)
+        conteos["NOMBRE_CLUSTER"] = conteos["CLUSTER"].map(NOMBRES_CLUSTER)
         fig = px.bar(
-            conteos,x="CLUSTER",y="Vehículos",
-            color="CLUSTER",
-            color_discrete_sequence=COLORES,
+            conteos,
+            x="NOMBRE_CLUSTER",
+            y="Vehículos",
+            color="NOMBRE_CLUSTER",
+            category_orders={"NOMBRE_CLUSTER": list(NOMBRES_CLUSTER.values())},
+            color_discrete_map={
+                "Presión financiera": "#FF7500",
+                "Eficiencia relativa": "#003145",
+                "Presión ambiental": "#627887"
+            },
             text="Vehículos",
-            title="Distribución de los 16 vehículos"
+            title="Distribución de los 16 vehículos",
+            labels={"NOMBRE_CLUSTER": "Segmento"}
         )
         grafico(fig)
     with b:
         datos_grafica = df.copy()
-        datos_grafica["CLUSTER_VISUAL"] = datos_grafica["CLUSTER"].astype(int).astype(str)
+        datos_grafica["CLUSTER_VISUAL"] = datos_grafica["NOMBRE_CLUSTER"]
         fig = px.scatter(
             datos_grafica,
             x="COSTO_POR_KM_REAL",
             y="HUELLA_KGCO2E_POR_KM",
             color="CLUSTER_VISUAL",
-            category_orders={"CLUSTER_VISUAL": ["0", "1", "2"]},
-            color_discrete_map={"0": TURQUESA, "1": AZUL, "2": VERDE},
+            category_orders={"CLUSTER_VISUAL": list(NOMBRES_CLUSTER.values())},
+            color_discrete_map={
+                "Presión financiera": "#FF7500",
+                "Eficiencia relativa": "#003145",
+                "Presión ambiental": "#627887"
+            },
             hover_name="CODIGO_VEHICULO",
             hover_data={"KM_ANUALES_EST": ":.1f", "CLUSTER_VISUAL": True},
             title="Costo vs. impacto ambiental",
             labels={
                 "COSTO_POR_KM_REAL": "COP por km",
                 "HUELLA_KGCO2E_POR_KM": "kgCO₂e por km",
-                "CLUSTER_VISUAL": "Clúster",
+                "CLUSTER_VISUAL": "Segmento",
                 "KM_ANUALES_EST": "Km anuales"
             }
         )
