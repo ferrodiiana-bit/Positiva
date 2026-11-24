@@ -267,7 +267,7 @@ elif pagina == "2. Segmentación inteligente":
     st.dataframe(comparacion_vista.style.format({
         "Índice de silueta (sin unidad)": lambda v: formato_numero(v, 4)
     }), use_container_width=True, hide_index=True)
-    st.subheader("Perfiles de los clústeres")
+    st.subheader("Perfiles de los segmentos")
     perfiles = df.groupby("CLUSTER").agg(
         Vehiculos=("CODIGO_VEHICULO","count"),
         Costo_mediano=("COSTO_POR_KM_REAL","median"),
@@ -275,11 +275,12 @@ elif pagina == "2. Segmentación inteligente":
         Km_anuales=("KM_ANUALES_EST","median")
     ).round(3)
     perfiles_vista = perfiles.reset_index().rename(columns={
-        "CLUSTER": "Clúster", "Vehiculos": "Vehículos (n.º)",
+        "CLUSTER": "Segmento", "Vehiculos": "Vehículos (n.º)",
         "Costo_mediano": "Costo mediano (COP/km)",
         "Huella_mediana": "Emisiones medianas (kgCO₂e/km)",
         "Km_anuales": "Recorrido mediano (km/año)"
     })
+    perfiles_vista["Segmento"] = perfiles_vista["Segmento"].map(NOMBRES_CLUSTER)
     st.dataframe(perfiles_vista.style.format({
         "Costo mediano (COP/km)": lambda v: "$" + formato_numero(v, 2),
         "Emisiones medianas (kgCO₂e/km)": lambda v: formato_numero(v, 3),
@@ -287,8 +288,9 @@ elif pagina == "2. Segmentación inteligente":
     }), use_container_width=True, hide_index=True)
     st.caption("COP = pesos colombianos; kgCO₂e = kilogramos de dióxido de carbono equivalente. Las cifras representan medianas por grupo.")
     st.caption(
-        "Las etiquetas 0, 1 y 2 son identificadores "
-        "matemáticos, no niveles de riesgo predefinidos."
+        "Los nombres de los segmentos describen las "
+        "características predominantes de cada grupo identificado "
+        "por K-means. No representan niveles de riesgo predefinidos."
     )
 
 elif pagina == "3. Vehículos prioritarios":
