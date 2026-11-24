@@ -295,22 +295,30 @@ elif pagina == "2. Segmentación inteligente":
 
 elif pagina == "3. Vehículos prioritarios":
     with st.expander("Información del proyecto y hallazgos"):
-        st.markdown('**Criterio de focalización.** Los grupos **0 y 2** reúnen **cinco de los 16 vehículos (31,25 %)** seleccionados para profundizar el análisis por sus patrones relativos de costos y emisiones.\n\n**Qué indica «prioritario».** Significa **revisión técnica y financiera recomendada**, no que el vehículo esté averiado ni que deba reemplazarse de inmediato.\n\n**Información adicional necesaria.** Antes de decidir conviene verificar antigüedad, mantenimiento, estado mecánico, uso real, valor de mercado y alternativas de contratación.\n\n**Cómo interpretar el mapa.** La posición relaciona costo por kilómetro y huella por kilómetro; el tamaño de la burbuja representa el kilometraje anual estimado. Dos puntos pueden coincidir visualmente.')
+        st.markdown(
+            "**Criterio de focalización.** Los segmentos "
+            "**Presión financiera** y **Presión ambiental** "
+            "reúnen **cinco de los 16 vehículos (31,25 %)** "
+            "seleccionados para revisión prioritaria. "
+            "Esta selección orienta el análisis y no implica "
+            "una decisión automática de reemplazo."
+        )
     st.header("¿Dónde debemos poner la atención?")
     st.metric(
         "Vehículos candidatos a revisión",
         f"{len(candidatos)} de {len(df)}"
     )
     st.write(
-        "Se priorizan los clústeres 0 y 2 por su "
-        "comportamiento relativo de costos y emisiones. "
+        "Se priorizan los segmentos **Presión financiera** y "
+        "**Presión ambiental** por su comportamiento relativo "
+        "en costos y emisiones. "
         "La selección requiere validación técnica."
     )
     candidatos_vista = candidatos[[
-        "CODIGO_VEHICULO", "CLUSTER", "COSTO_POR_KM_REAL",
+        "CODIGO_VEHICULO", "NOMBRE_CLUSTER", "COSTO_POR_KM_REAL",
         "HUELLA_KGCO2E_POR_KM", "KM_ANUALES_EST"
     ]].rename(columns={
-        "CODIGO_VEHICULO": "Vehículo", "CLUSTER": "Clúster",
+        "CODIGO_VEHICULO": "Vehículo", "NOMBRE_CLUSTER": "Segmento",
         "COSTO_POR_KM_REAL": "Costo (COP/km)",
         "HUELLA_KGCO2E_POR_KM": "Emisiones (kgCO₂e/km)",
         "KM_ANUALES_EST": "Recorrido (km/año)"
@@ -329,6 +337,14 @@ elif pagina == "3. Vehículos prioritarios":
             False:"Seguimiento"
         }),
         hover_name="CODIGO_VEHICULO",
+        hover_data={"NOMBRE_CLUSTER": True},
+        labels={
+            "COSTO_POR_KM_REAL": "Costo (COP/km)",
+            "HUELLA_KGCO2E_POR_KM": "Emisiones (kgCO₂e/km)",
+            "KM_ANUALES_EST": "Recorrido (km/año)",
+            "NOMBRE_CLUSTER": "Segmento",
+            "color": "Prioridad"
+        },
         size="KM_ANUALES_EST",
         color_discrete_map={
             "Revisión prioritaria":NARANJA,
